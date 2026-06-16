@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PGMagic24 Registration Success</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:0;
+}
+
+.header{
+background:#1e3a8a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.container{
+width:90%;
+max-width:700px;
+margin:30px auto;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.successIcon{
+font-size:70px;
+}
+
+.successText{
+font-size:28px;
+font-weight:bold;
+color:#16a34a;
+margin-top:10px;
+}
+
+.info{
+font-size:20px;
+margin:15px 0;
+}
+
+.codeBox{
+background:#f1f5f9;
+padding:15px;
+border-radius:8px;
+margin:15px 0;
+font-size:22px;
+font-weight:bold;
+}
+
+.qr{
+margin:25px 0;
+}
+
+.btn{
+width:100%;
+padding:15px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:8px;
+font-size:18px;
+cursor:pointer;
+margin-top:20px;
+}
+
+.btn:hover{
+background:#15803d;
+}
+
+.note{
+background:#fff8dc;
+padding:15px;
+border-radius:8px;
+margin-top:20px;
+font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>🎉 PGMagic24</h1>
+<p>Owner Registration Successful</p>
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<div class="successIcon">✅</div>
+
+<div class="successText">
+Registration Successful
+</div>
+
+<div class="info">
+Owner ID :
+<b id="ownerId"></b>
+</div>
+
+<div class="info">
+Owner Name :
+<b id="ownerName"></b>
+</div>
+
+<div class="info">
+Business Name :
+<b id="businessName"></b>
+</div>
+
+<div class="info">
+Business Code
+</div>
+
+<div class="codeBox" id="businessCode">
+BUS000001
+</div>
+
+<div class="info">
+Unicode
+</div>
+
+<div class="codeBox" id="unicode">
+001A001
+</div>
+
+<div class="qr">
+
+<img
+id="qrCode"
+src=""
+width="250"
+alt="QR Code">
+
+</div>
+
+<div class="note">
+⚠️ Keep your Unicode and QR Code safe.
+You will need them for future lucky draws.
+</div>
+
+<button
+class="btn"
+onclick="downloadQR()">
+📥 Download QR & Continue
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const ownerId =
+localStorage.getItem("ownerId") ||
+"OWN000000";
+
+const ownerName =
+localStorage.getItem("ownerName") ||
+"Owner";
+
+const businessName =
+localStorage.getItem("businessName") ||
+localStorage.getItem("pgName") ||
+"Business";
+
+const unicode =
+localStorage.getItem("unicode") ||
+"001A001";
+
+let businessCode =
+localStorage.getItem("businessCode");
+
+if(!businessCode){
+
+businessCode =
+"BUS" +
+Math.floor(
+100000 +
+Math.random()*900000
+);
+
+localStorage.setItem(
+"businessCode",
+businessCode
+);
+
+}
+
+document.getElementById("ownerId").innerText =
+ownerId;
+
+document.getElementById("ownerName").innerText =
+ownerName;
+
+document.getElementById("businessName").innerText =
+businessName;
+
+document.getElementById("businessCode").innerText =
+businessCode;
+
+document.getElementById("unicode").innerText =
+unicode;
+
+const qrData =
+ownerId +
+" | " +
+businessCode +
+" | " +
+unicode;
+
+document.getElementById("qrCode").src =
+"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" +
+encodeURIComponent(qrData);
+
+function downloadQR(){
+
+const qrImage =
+document.getElementById("qrCode");
+
+const link =
+document.createElement("a");
+
+link.href =
+qrImage.src;
+
+link.download =
+ownerId + "-QR.png";
+
+link.click();
+
+setTimeout(()=>{
+
+window.location.href =
+"owner-login.html";
+
+},1000);
+
+}
+
+function downloadQR(){
+
+const qrImage =
+document.getElementById("qrCode");
+
+const link =
+document.createElement("a");
+
+link.href =
+qrImage.src;
+
+link.download =
+ownerId + "-QR.png";
+
+link.click();
+
+setTimeout(()=>{
+
+window.location.href =
+"owner-login.html";
+
+},1000);
+
+}
+
+</script>
+
+</body>
+</html>
+

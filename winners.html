@@ -1,0 +1,249 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGMagic24 Winners</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:0;
+}
+
+.header{
+background:#16a34a;
+color:white;
+text-align:center;
+padding:25px;
+}
+
+.container{
+width:90%;
+max-width:900px;
+margin:30px auto;
+}
+
+.title{
+text-align:center;
+font-size:28px;
+font-weight:bold;
+margin-bottom:20px;
+}
+
+.winner-card{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:12px;
+box-shadow:0 0 12px rgba(0,0,0,0.1);
+border-left:6px solid #16a34a;
+}
+
+.winner-name{
+font-size:24px;
+font-weight:bold;
+color:#16a34a;
+margin-bottom:10px;
+}
+
+.info{
+font-size:18px;
+margin:6px 0;
+}
+
+.prize{
+font-size:22px;
+font-weight:bold;
+color:#eab308;
+margin-top:10px;
+}
+
+.loading{
+text-align:center;
+font-size:22px;
+margin-top:50px;
+}
+
+.empty{
+text-align:center;
+font-size:22px;
+color:red;
+margin-top:50px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>🏆 PGMagic24</h1>
+<p>Lucky Draw Winners</p>
+</div>
+
+<div class="container">
+
+<div class="title">
+🎉 Verified Winners List
+</div>
+
+<div id="winnersList">
+
+<div class="loading">
+Loading Winners...
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey:"AIzaSyB3e0nacuSVzH4qSi0DGA1m_wmzIcLnqx4",
+authDomain:"pgmagicm.firebaseapp.com",
+projectId:"pgmagicm",
+storageBucket:"pgmagicm.firebasestorage.app",
+messagingSenderId:"176620652925",
+appId:"1:176620652925:web:15ba0db73474f03c9aa414"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const winnersList =
+document.getElementById("winnersList");
+
+async function loadWinners(){
+
+try{
+
+const snapshot =
+await getDocs(
+collection(db,"winners")
+);
+
+if(snapshot.empty){
+
+winnersList.innerHTML = `
+<div class="empty">
+No Winners Found
+</div>
+`;
+
+return;
+
+}
+
+let html = "";
+
+snapshot.forEach(doc=>{
+
+const data = doc.data();
+
+let date = "";
+
+if(data.verifiedAt){
+
+try{
+date =
+new Date(
+data.verifiedAt.seconds * 1000
+).toLocaleDateString();
+}
+catch(e){
+date = "";
+}
+
+}
+
+html += `
+
+<div class="winner-card">
+
+<div class="winner-name">
+🏆 ${data.winnerName || ""}
+</div>
+
+<div class="info">
+<b>Unicode :</b>
+${data.winnerUnicode || ""}
+</div>
+
+<div class="prize">
+🎁 Prize :
+${data.prize || ""}
+</div>
+
+<div class="info">
+<b>Owner :</b>
+${data.ownerName || ""}
+</div>
+
+<div class="info">
+<b>Owner ID :</b>
+${data.ownerId || ""}
+</div>
+
+<div class="info">
+<b>Business :</b>
+${data.businessName || ""}
+</div>
+
+<div class="info">
+<b>Business Code :</b>
+${data.businessCode || ""}
+</div>
+
+<div class="info">
+<b>Date :</b>
+${date}
+</div>
+
+</div>
+
+`;
+
+});
+
+winnersList.innerHTML = html;
+
+}
+catch(error){
+
+console.log(error);
+
+winnersList.innerHTML = `
+<div class="empty">
+Failed To Load Winners
+</div>
+`;
+
+}
+
+}
+
+loadWinners();
+
+</script>
+
+</body>
+</html>
+```

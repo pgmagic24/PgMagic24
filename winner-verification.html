@@ -1,0 +1,339 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGMagic24 Winner Verification</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:0;
+}
+
+.header{
+background:#1e3a8a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.container{
+width:90%;
+max-width:800px;
+margin:30px auto;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:6px;
+box-sizing:border-box;
+}
+
+.btn{
+width:100%;
+padding:15px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:8px;
+font-size:18px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.btn:hover{
+background:#15803d;
+}
+
+.info{
+background:#eef4ff;
+padding:15px;
+border-radius:10px;
+margin-top:20px;
+line-height:2;
+display:none;
+}
+
+.success{
+margin-top:20px;
+font-size:20px;
+font-weight:bold;
+text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>🏆 Winner Verification</h1>
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<label>Winner Unicode</label>
+
+<input
+id="unicode"
+placeholder="Enter Unicode Number">
+
+<button
+class="btn"
+onclick="searchWinner()">
+Search Winner
+</button>
+
+<div
+class="info"
+id="resultBox">
+
+<h3>Winner Details</h3>
+
+<b>Name :</b>
+<span id="winnerName"></span><br>
+
+<b>Mobile :</b>
+<span id="winnerMobile"></span><br>
+
+<b>Unicode :</b>
+<span id="winnerUnicode"></span><br><br>
+
+<h3>Owner Details</h3>
+
+<b>Owner Name :</b>
+<span id="ownerName"></span><br>
+
+<b>Owner ID :</b>
+<span id="ownerId"></span><br>
+
+<b>Business Name :</b>
+<span id="businessName"></span><br>
+
+<b>Business Code :</b>
+<span id="businessCode"></span><br><br>
+
+<label>Prize</label>
+
+<input
+id="prize"
+placeholder="Example : Bike / Gold Coin / Cash">
+
+<button
+class="btn"
+onclick="verifyWinner()">
+Verify Winner
+</button>
+
+</div>
+
+<div
+id="status"
+class="success">
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+query,
+where,
+getDocs,
+addDoc
+}
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey:"AIzaSyB3e0nacuSVzH4qSi0DGA1m_wmzIcLnqx4",
+authDomain:"pgmagicm.firebaseapp.com",
+projectId:"pgmagicm",
+storageBucket:"pgmagicm.firebasestorage.app",
+messagingSenderId:"176620652925",
+appId:"1:176620652925:web:15ba0db73474f03c9aa414"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let winnerData = {};
+let ownerData = {};
+
+window.searchWinner = async function(){
+
+const unicode =
+document.getElementById("unicode")
+.value.trim();
+
+if(!unicode){
+alert("Enter Unicode");
+return;
+}
+
+const q =
+query(
+collection(db,"tenants"),
+where("unicode","==",unicode)
+);
+
+const snap =
+await getDocs(q);
+
+if(snap.empty){
+
+alert("Unicode Not Found");
+return;
+
+}
+
+winnerData =
+snap.docs[0].data();
+
+const ownerQuery =
+query(
+collection(db,"owners"),
+where("ownerId","==",winnerData.ownerId)
+);
+
+const ownerSnap =
+await getDocs(ownerQuery);
+
+if(ownerSnap.empty){
+
+alert("Owner Not Found");
+return;
+
+}
+
+ownerData =
+ownerSnap.docs[0].data();
+
+document.getElementById("resultBox").style.display =
+"block";
+
+document.getElementById("winnerName").innerText =
+winnerData.fullName || "";
+
+document.getElementById("winnerMobile").innerText =
+winnerData.mobile || "";
+
+document.getElementById("winnerUnicode").innerText =
+winnerData.unicode || "";
+
+document.getElementById("ownerName").innerText =
+ownerData.fullName || "";
+
+document.getElementById("ownerId").innerText =
+ownerData.ownerId || "";
+
+document.getElementById("businessName").innerText =
+ownerData.businessName || ""; 
+
+document.getElementById("businessCode").innerText =
+winnerData.businessCode || "";
+
+};
+
+window.verifyWinner = async function(){
+
+const prize =
+document.getElementById("prize")
+.value.trim();
+
+if(!prize){
+
+alert("Enter Prize");
+return;
+
+}
+
+const duplicateQuery =
+query(
+collection(db,"winners"),
+where("winnerUnicode","==",winnerData.unicode)
+);
+
+const duplicateSnap =
+await getDocs(duplicateQuery);
+
+if(!duplicateSnap.empty){
+
+alert("Winner Already Verified");
+return;
+
+}
+
+await addDoc(
+collection(db,"winners"),
+{
+
+winnerName:
+winnerData.fullName,
+
+winnerMobile:
+winnerData.mobile,
+
+winnerUnicode:
+winnerData.unicode,
+
+ownerName:
+ownerData.fullName,
+
+ownerId:
+ownerData.ownerId,
+
+businessName:
+ownerData.businessName,
+
+businessCode:
+winnerData.businessCode,
+
+prize,
+
+status:"Verified",
+
+verifiedAt:new Date()
+
+}
+);
+
+document.getElementById("status").style.color =
+"green";
+
+document.getElementById("status").innerHTML =
+"🏆 Winner Verified Successfully";
+
+};
+
+</script>
+
+</body>
+</html>
+```

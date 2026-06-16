@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Owners</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:0;
+}
+
+.header{
+background:#1e3a8a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.container{
+width:95%;
+max-width:1200px;
+margin:20px auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+th{
+background:#16a34a;
+color:white;
+padding:12px;
+}
+
+td{
+padding:12px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+tr:nth-child(even){
+background:#f9fafb;
+}
+
+.btn{
+display:inline-block;
+padding:12px 20px;
+background:#1e3a8a;
+color:white;
+text-decoration:none;
+border-radius:8px;
+margin-bottom:15px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<h1>👥 All Owners</h1>
+</div>
+
+<div class="container">
+
+<a href="admin-dashboard.html" class="btn">
+⬅ Back To Dashboard
+</a>
+
+<table>
+
+<thead>
+<tr>
+<th>Owner Name</th>
+<th>Mobile</th>
+<th>Business Name</th>
+<th>Owner ID</th>
+<th>Business Code</th>
+</tr>
+</thead>
+
+<tbody id="ownersBody">
+</tbody>
+
+</table>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey:"AIzaSyB3e0nacuSVzH4qSi0DGA1m_wmzIcLnqx4",
+authDomain:"pgmagicm.firebaseapp.com",
+projectId:"pgmagicm",
+storageBucket:"pgmagicm.firebasestorage.app",
+messagingSenderId:"176620652925",
+appId:"1:176620652925:web:15ba0db73474f03c9aa414"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function loadOwners(){
+
+const snapshot =
+await getDocs(collection(db,"owners"));
+
+const tbody =
+document.getElementById("ownersBody");
+
+snapshot.forEach(doc=>{
+
+const data = doc.data();
+
+tbody.innerHTML += `
+<tr>
+<td>${data.fullName || "-"}</td>
+<td>${data.mobile || "-"}</td>
+<td>${data.businessName || "-"}</td>
+<td>${data.ownerId || "-"}</td>
+<td>${data.businessCode || "-"}</td>
+</tr>
+`;
+
+});
+
+}
+
+loadOwners();
+
+</script>
+
+</body>
+</html>

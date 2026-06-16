@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGMagic24 Owner Registration</title>
+
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:0}
+.header{background:#1e3a8a;color:white;padding:20px;text-align:center}
+.container{width:90%;max-width:700px;margin:30px auto}
+.form-box{background:white;padding:30px;border-radius:12px;box-shadow:0 0 15px rgba(0,0,0,0.1)}
+label{display:block;margin-top:15px;font-weight:bold}
+input{width:100%;padding:12px;margin-top:5px;border:1px solid #ccc;border-radius:6px;box-sizing:border-box}
+#ageStatus{margin-top:10px;font-weight:bold;font-size:18px}
+.btn{width:100%;padding:15px;margin-top:25px;background:#16a34a;color:white;border:none;border-radius:8px;font-size:18px;cursor:pointer}
+.btn:hover{background:#15803d}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>🎉 PGMagic24</h1>
+<p>Owner Registration</p>
+</div>
+
+<div class="container">
+<div class="form-box">
+
+<form id="ownerForm">
+
+<label>Full Name</label>
+<input id="fullName" required>
+
+<label>Father Name</label>
+<input id="fatherName" required>
+
+<label>Mobile Number</label>
+<input id="mobile" maxlength="10" required>
+
+<label>Address</label>
+<input id="address" required>
+
+<label>Date Of Birth</label>
+<input id="dob" type="date" required>
+
+<div id="ageStatus"></div>
+
+<label>Aadhaar Number</label>
+<input id="aadhaar" maxlength="12" required>
+
+<label>Business Name</label>
+<input id="businessName" required>
+
+<label>Business Proof Upload</label>
+<input id="proof" type="file" accept="image/*" required>
+
+<button type="submit" class="btn" id="submitBtn" disabled>
+Proceed To Payment
+</button>
+
+</form>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey:"YOUR_API_KEY",
+authDomain:"YOUR_AUTH_DOMAIN",
+projectId:"pgmagicm",
+storageBucket:"pgmagicm.appspot.com",
+messagingSenderId:"YOUR_SENDER_ID",
+appId:"YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const dobInput = document.getElementById("dob");
+const ageStatus = document.getElementById("ageStatus");
+const submitBtn = document.getElementById("submitBtn");
+
+dobInput.max = new Date().toISOString().split("T")[0];
+
+dobInput.addEventListener("change",()=>{
+const dob = new Date(dobInput.value);
+const today = new Date();
+
+let years = today.getFullYear() - dob.getFullYear();
+let months = today.getMonth() - dob.getMonth();
+let days = today.getDate() - dob.getDate();
+
+if(days < 0){
+months--;
+days += new Date(today.getFullYear(),today.getMonth(),0).getDate();
+}
+
+if(months < 0){
+years--;
+months += 12;
+}
+
+if(years >= 18){
+ageStatus.innerHTML = `✅ Age : ${years} Years ${months} Months ${days} Days`;
+ageStatus.style.color = "green";
+submitBtn.disabled = false;
+}else{
+ageStatus.innerHTML = `❌ Age : ${years} Years ${months} Months ${days} Days<br>Minimum Age 18 Years`;
+ageStatus.style.color = "red";
+submitBtn.disabled = true;
+}
+});
+
+document.getElementById("ownerForm").addEventListener("submit", async function(e){
+e.preventDefault();
+
+try{
+
+const ownerId = "OWN" + Math.floor(100000 + Math.random()*900000);
+const businessCode = "BZ" + Math.floor(100000 + Math.random()*900000);
+
+const aadhaar = document.getElementById("aadhaar").value;
+const last4 = aadhaar.slice(-4);
+
+await addDoc(collection(db,"owners"),{
+ownerId: ownerId,
+businessCode: businessCode,
+fullName: document.getElementById("fullName").value,
+fatherName: document.getElementById("fatherName").value,
+mobile: document.getElementById("mobile").value,
+address: document.getElementById("address").value,
+dob: document.getElementById("dob").value,
+aadhaarLast4: last4,
+businessName: document.getElementById("businessName").value,
+paymentStatus:"pending",
+status:"pending",
+createdAt:new Date()
+});
+
+localStorage.setItem("ownerId", ownerId);
+localStorage.setItem("businessCode", businessCode);
+localStorage.setItem("ownerName", document.getElementById("fullName").value);
+localStorage.setItem("businessName", document.getElementById("businessName").value);
+localStorage.setItem("pgName", document.getElementById("businessName").value);
+
+window.location.href = "owner-payment.html";
+
+}catch(error){
+alert(error.message);
+console.log(error);
+}
+});
+</script>
+
+</body>
+</html>

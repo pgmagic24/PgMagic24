@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGMagic24 Add Winner</title>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:0;
+}
+
+.header{
+background:#1e3a8a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.container{
+width:90%;
+max-width:700px;
+margin:30px auto;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,.1);
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:8px;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:15px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:8px;
+font-size:18px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+background:#15803d;
+}
+
+.result{
+display:none;
+margin-top:20px;
+padding:15px;
+background:#eef4ff;
+border-radius:10px;
+line-height:2;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>🏆 Add Winner</h1>
+<p>Admin Winner Verification</p>
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<label>Unicode / Business Code / Owner ID</label>
+
+<input
+type="text"
+id="unicode"
+placeholder="Enter Unicode">
+
+<button onclick="searchWinner()">
+🔍 Search
+</button>
+
+<div id="result" class="result"></div>
+
+<input
+type="text"
+id="prize"
+placeholder="Enter Prize Name">
+
+<button onclick="saveWinner()">
+🎉 Save Winner
+</button>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+getDocs,
+addDoc
+}
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyB3e0nacuSVzH4qSi0DGA1m_wmzIcLnqx4",
+authDomain:"pgmagicm.firebaseapp.com",
+projectId:"pgmagicm",
+storageBucket:"pgmagicm.firebasestorage.app",
+messagingSenderId:"176620652925",
+appId:"1:176620652925:web:15ba0db73474f03c9aa414"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let selectedData = null;
+
+window.searchWinner = async function(){
+
+const value =
+document.getElementById("unicode").value.trim();
+
+if(!value){
+alert("Enter Unicode");
+return;
+}
+
+const result =
+document.getElementById("result");
+
+result.style.display = "none";
+
+let found = false;
+
+/* SEARCH OWNERS */
+const owners =
+await getDocs(collection(db,"owners"));
+
+owners.forEach(doc=>{
+
+const data = doc.data();
+
+if(
+data.unicode === value ||
+data.businessCode === value ||
+data.ownerId === value
+){
+
+found = true;
+
+selectedData = {
+...data,
+docId:doc.id
+};
+
+result.style.display = "block";
+
+result.innerHTML = `
+<b>Owner Name:</b> ${data.fullName || "-"}<br>
+<b>Owner ID:</b> ${data.ownerId || "-"}<br>
+<b>Business:</b> ${data.businessName || "-"}<br>
+<b>Business Code:</b> ${data.businessCode || "-"}<br>
+`;
+
+}
+
+});
+
+if(!found){
+
+alert("No Record Found");
+
+}
+
+};
+
+window.saveWinner = async function(){
+
+if(!selectedData){
+
+alert("Search Record First");
+return;
+
+}
+
+const prize =
+document.getElementById("prize").value.trim();
+
+if(!prize){
+
+alert("Enter Prize");
+return;
+
+}
+
+try{
+
+await addDoc(
+collection(db,"winners"),
+{
+winnerName:selectedData.fullName || "",
+winnerUnicode:selectedData.unicode || "",
+ownerId:selectedData.ownerId || "",
+ownerName:selectedData.fullName || "",
+businessName:selectedData.businessName || "",
+businessCode:selectedData.businessCode || "",
+prize:prize,
+drawDate:new Date().toLocaleDateString(),
+verifiedAt:new Date()
+}
+);
+
+alert("Winner Saved Successfully");
+
+document.getElementById("unicode").value="";
+document.getElementById("prize").value="";
+document.getElementById("result").innerHTML="";
+document.getElementById("result").style.display="none";
+
+selectedData=null;
+
+}
+catch(error){
+
+alert(error.message);
+
+}
+
+};
+
+</script>
+
+</body>
+</html>

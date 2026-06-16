@@ -1,0 +1,254 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGMagic24 Tenant Payment</title>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:0;
+}
+
+.header{
+background:#1e3a8a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.container{
+width:90%;
+max-width:700px;
+margin:30px auto;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,.1);
+text-align:center;
+}
+
+.amount{
+font-size:35px;
+font-weight:bold;
+color:#16a34a;
+margin:20px 0;
+}
+
+.info{
+font-size:18px;
+margin:10px 0;
+}
+
+input{
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:6px;
+font-size:16px;
+box-sizing:border-box;
+margin-top:15px;
+}
+
+.btn{
+width:100%;
+padding:15px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:8px;
+font-size:18px;
+cursor:pointer;
+margin-top:20px;
+}
+
+.success{
+margin-top:20px;
+font-size:20px;
+font-weight:bold;
+color:green;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>🎉 PGMagic24</h1>
+<p>Tenant Registration Payment</p>
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Registration Fee</h2>
+
+<div class="amount">₹50</div>
+
+<div class="info">
+<b>Owner ID :</b>
+<span id="ownerId"></span>
+</div>
+
+<div class="info">
+<b>Business Code :</b>
+<span id="businessCode"></span>
+</div>
+
+<div class="info">
+<b>Tenant Name :</b>
+<span id="tenantName"></span>
+</div>
+
+<input
+id="utr"
+placeholder="Enter UTR Number">
+
+<button
+class="btn"
+onclick="submitPayment()">
+Submit Payment
+</button>
+
+<div
+id="status"
+class="success">
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc
+}
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyB3e0nacuSVzH4qSi0DGA1m_wmzIcLnqx4",
+authDomain:"pgmagicm.firebaseapp.com",
+projectId:"pgmagicm",
+storageBucket:"pgmagicm.firebasestorage.app",
+messagingSenderId:"176620652925",
+appId:"1:176620652925:web:15ba0db73474f03c9aa414"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const params = new URLSearchParams(window.location.search);
+
+const ownerId = params.get("owner") || "";
+const businessCode = params.get("business") || "";
+const tenantName = params.get("name") || "";
+const fatherName = params.get("father") || "";
+const mobile = params.get("mobile") || "";
+const address = params.get("address") || "";
+const aadhaar = params.get("aadhaar") || "";
+
+document.getElementById("ownerId").innerText = ownerId;
+document.getElementById("businessCode").innerText = businessCode;
+document.getElementById("tenantName").innerText = tenantName;
+
+
+console.log("ownerId =", ownerId);
+console.log("businessCode =", businessCode);
+console.log("tenantName =", tenantName);
+console.log("mobile =", mobile);
+window.submitPayment = async function(){
+alert("Submit Button Clicked");
+const utr =
+document.getElementById("utr").value.trim();
+
+if(utr.length < 6){
+alert("Enter Valid UTR Number");
+return;
+}
+
+const unicode =
+"PG" +
+Math.floor(
+100000 + Math.random()*900000
+);
+
+try{
+
+alert("Before Firebase Save");
+
+
+
+await addDoc(
+collection(db,"tenantPayments"),
+{
+ownerId,
+businessCode,
+tenantName,
+fatherName,
+mobile,
+address,
+aadhaar,
+amount:50,
+utr,
+unicode,
+status:"Paid",
+createdAt:new Date()
+}
+);
+
+await addDoc(
+collection(db,"tenants"),
+{
+ownerId,
+businessCode,
+fullName:tenantName,
+fatherName,
+mobile,
+address,
+aadhaar,
+unicode,
+paymentStatus:"Paid",
+status:"Active",
+createdAt:new Date()
+}
+);
+
+document.getElementById("status").innerHTML =
+"✅ Payment Successful";
+
+setTimeout(()=>{
+
+window.location.href =
+`tenant-success.html?unicode=${unicode}&owner=${ownerId}&business=${businessCode}`;
+
+},1500);
+
+}
+catch(error){
+
+alert(error.message);
+console.log(error);
+
+}
+
+};
+
+</script>
+
+</body>
+</html>
+```

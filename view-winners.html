@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGMagic24 Winners List</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:0;
+}
+
+.header{
+background:#1e3a8a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.container{
+width:95%;
+max-width:1000px;
+margin:30px auto;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+.card h3{
+margin:0 0 15px 0;
+color:#16a34a;
+}
+
+.info{
+line-height:2;
+font-size:18px;
+}
+
+.empty{
+text-align:center;
+font-size:22px;
+font-weight:bold;
+color:#dc2626;
+margin-top:40px;
+}
+
+.backBtn{
+display:inline-block;
+padding:12px 20px;
+background:#1e3a8a;
+color:white;
+text-decoration:none;
+border-radius:8px;
+margin-bottom:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<h1>🏆 Winners List</h1>
+</div>
+
+<div class="container">
+
+<a href="admin-dashboard.html" class="backBtn">
+⬅ Back To Dashboard
+</a>
+
+<div class="card">
+
+<h3>Total Winners</h3>
+
+<div
+id="winnerCount"
+style="
+font-size:40px;
+font-weight:bold;
+color:#16a34a;">
+0
+</div>
+
+</div>
+
+<div id="winnersList"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey:"AIzaSyB3e0nacuSVzH4qSi0DGA1m_wmzIcLnqx4",
+authDomain:"pgmagicm.firebaseapp.com",
+projectId:"pgmagicm",
+storageBucket:"pgmagicm.firebasestorage.app",
+messagingSenderId:"176620652925",
+appId:"1:176620652925:web:15ba0db73474f03c9aa414"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
+
+async function loadWinners(){
+
+const winnersDiv =
+document.getElementById("winnersList");
+
+const snapshot =
+await getDocs(
+collection(db,"winners")
+);
+
+document.getElementById("winnerCount").innerText =
+snapshot.size;
+
+if(snapshot.empty){
+
+winnersDiv.innerHTML =
+'<div class="empty">No Winners Found</div>';
+
+return;
+
+}
+
+let html = "";
+
+snapshot.forEach(doc=>{
+
+const data =
+doc.data();
+
+let date = "";
+
+if(data.verifiedAt){
+
+try{
+
+date =
+new Date(
+data.verifiedAt.seconds * 1000
+).toLocaleDateString();
+
+}
+catch(e){
+
+date = "";
+
+}
+
+}
+
+html += `
+
+<div class="card">
+
+<h3>🏆 ${data.winnerName || "-"}</h3>
+
+<div class="info">
+
+<b>Unicode :</b>
+${data.winnerUnicode || "-"}<br>
+
+<b>Prize :</b>
+${data.prize || "-"}<br>
+
+<b>Owner :</b>
+${data.ownerName || "-"}<br>
+
+<b>Business :</b>
+${data.businessName || "-"}<br>
+
+<b>Date :</b>
+${date}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+winnersDiv.innerHTML =
+html;
+
+}
+
+loadWinners();
+
+</script>
+
+</body>
+</html>
