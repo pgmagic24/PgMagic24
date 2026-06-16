@@ -6,7 +6,6 @@
 <title>PGMagic24 QR Generator</title>
 
 <style>
-
 body{
 font-family:Arial,sans-serif;
 background:#f4f6f9;
@@ -68,11 +67,9 @@ border-radius:8px;
 word-break:break-all;
 font-size:14px;
 }
-
 </style>
 
 </head>
-
 <body>
 
 <div class="header">
@@ -116,10 +113,10 @@ font-size:14px;
 <script>
 
 const ownerId =
-localStorage.getItem("ownerId") || "OWN892677";
+localStorage.getItem("ownerId") || "";
 
 const businessCode =
-localStorage.getItem("businessCode") || "BZ735250";
+localStorage.getItem("businessCode") || "";
 
 document.getElementById("ownerId").innerText =
 ownerId;
@@ -127,10 +124,8 @@ ownerId;
 document.getElementById("businessCode").innerText =
 businessCode;
 
-/* GITHUB PAGES URL */
-
 const registrationLink =
-`https://pgmagic24.github.io/PgMagic24/tenant-register.html?ownerId=${ownerId}&businessCode=${businessCode}`;
+`https://pgmagic24.github.io/PgMagic24/tenant-register.html?ownerId=${encodeURIComponent(ownerId)}&businessCode=${encodeURIComponent(businessCode)}`;
 
 document.getElementById("linkBox").innerText =
 registrationLink;
@@ -140,9 +135,7 @@ document.getElementById("qrImage").src =
 
 function copyLink(){
 
-navigator.clipboard.writeText(
-registrationLink
-);
+navigator.clipboard.writeText(registrationLink);
 
 alert("Registration Link Copied Successfully");
 

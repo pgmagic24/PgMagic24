@@ -218,16 +218,12 @@ businessCode;
 document.getElementById("unicode").innerText =
 unicode;
 
-const qrData =
-ownerId +
-" | " +
-businessCode +
-" | " +
-unicode;
+const registrationLink =
+`https://pgmagic24.github.io/PgMagic24/tenant-register.html?ownerId=${ownerId}&businessCode=${businessCode}`;
 
 document.getElementById("qrCode").src =
 "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" +
-encodeURIComponent(qrData);
+encodeURIComponent(registrationLink);
 
 function downloadQR(){
 
