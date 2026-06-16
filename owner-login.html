@@ -80,12 +80,12 @@ background:#15803d;
 
 <div class="card">
 
-<label>Mobile Number</label>
+<label>Mobile Number OR Owner ID</label>
 
 <input
 type="text"
-id="mobile"
-placeholder="Enter Mobile Number">
+id="loginInput"
+placeholder="Enter Mobile Number OR Owner ID">
 
 <button
 class="btn"
@@ -125,25 +125,23 @@ const db = getFirestore(app);
 
 window.loginOwner = async function(){
 
-const mobile =
-document.getElementById("mobile")
+const input =
+document.getElementById("loginInput")
 .value.trim();
 
-if(mobile.length !== 10){
+if(!input){
 
-alert("Enter Valid Mobile Number");
+alert("Enter Mobile Number OR Owner ID");
 return;
 
 }
 
-alert("Checking Owner Details...");
-
 try{
 
+alert("Checking Owner Details...");
+
 const snapshot =
-await getDocs(
-collection(db,"owners")
-);
+await getDocs(collection(db,"owners"));
 
 let found = false;
 
@@ -151,7 +149,16 @@ snapshot.forEach(doc=>{
 
 const data = doc.data();
 
-if(data.mobile == mobile){
+const mobile =
+(data.mobile || "").toString().trim();
+
+const ownerId =
+(data.ownerId || "").toString().trim();
+
+if(
+mobile === input ||
+ownerId === input
+){
 
 found = true;
 
@@ -162,7 +169,7 @@ doc.id
 
 localStorage.setItem(
 "ownerId",
-data.ownerId || ""
+ownerId
 );
 
 localStorage.setItem(
@@ -202,4 +209,3 @@ alert(error.message);
 
 </body>
 </html>
-```
