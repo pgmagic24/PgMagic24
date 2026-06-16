@@ -149,10 +149,10 @@ const params =
 new URLSearchParams(window.location.search);
 
 const ownerId =
-params.get("owner") || "";
+params.get("ownerId") || "";
 
 const businessCode =
-params.get("business") || "";
+params.get("businessCode") || "";
 
 document.getElementById(
 "businessDisplay"
@@ -240,8 +240,8 @@ const aadhaar =
 document.getElementById("aadhaar").value;
 
 window.location.href =
-`tenant-payment.html?owner=${ownerId}
-&business=${businessCode}
+`tenant-payment.html?ownerId=${ownerId}
+&businessCode=${businessCode}
 &name=${encodeURIComponent(fullName)}
 &father=${encodeURIComponent(fatherName)}
 &mobile=${encodeURIComponent(mobile)}
