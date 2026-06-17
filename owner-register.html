@@ -55,6 +55,12 @@ input{width:100%;padding:12px;margin-top:5px;border:1px solid #ccc;border-radius
 <label>Business Proof Upload</label>
 <input id="proof" type="file" accept="image/*" required>
 
+<label style="display:block;margin-top:15px;">
+<input type="checkbox" id="ownerTerms">
+
+I agree to PGMagic24 Terms & Conditions
+</label>
+
 <button type="submit" class="btn" id="submitBtn" disabled>
 Proceed To Payment
 </button>
@@ -116,6 +122,13 @@ submitBtn.disabled = true;
 
 document.getElementById("ownerForm").addEventListener("submit", async function(e){
 e.preventDefault();
+
+if(!document.getElementById("ownerTerms").checked){
+
+alert("Please accept Terms & Conditions");
+return;
+
+}
 
 try{
 
