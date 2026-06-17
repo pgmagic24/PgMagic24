@@ -190,7 +190,7 @@ window.searchWinner = async function(){
 
 const unicode =
 document.getElementById("unicode")
-.value.trim();
+.value.trim().toUpperCase();
 
 if(!unicode){
 alert("Enter Unicode");
@@ -329,6 +329,9 @@ document.getElementById("status").style.color =
 
 document.getElementById("status").innerHTML =
 "🏆 Winner Verified Successfully";
+
+document.getElementById("resultBox").style.display =
+"none";
 
 };
 

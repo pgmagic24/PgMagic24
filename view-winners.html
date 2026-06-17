@@ -82,7 +82,7 @@ margin-bottom:20px;
 
 <div class="card">
 
-<h3>Total Winners</h3>
+<h3>🏆 Total Verified Winners</h3>
 
 <div
 id="winnerCount"
@@ -107,7 +107,9 @@ from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
 getFirestore,
 collection,
-getDocs
+getDocs,
+query,
+orderBy
 }
 from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
@@ -135,7 +137,10 @@ document.getElementById("winnersList");
 
 const snapshot =
 await getDocs(
-collection(db,"winners")
+query(
+collection(db,"winners"),
+orderBy("verifiedAt","desc")
+)
 );
 
 document.getElementById("winnerCount").innerText =

@@ -135,7 +135,8 @@ from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
 getFirestore,
 collection,
-addDoc
+addDoc,
+getDocs
 }
 from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
@@ -185,6 +186,36 @@ const unicode =
 Math.floor(
 100000 + Math.random()*900000
 );
+
+const tenantSnapshot =
+await getDocs(collection(db,"tenants"));
+
+let mobileExists = false;
+let aadhaarExists = false;
+
+tenantSnapshot.forEach(doc=>{
+
+const data = doc.data();
+
+if(data.mobile === mobile){
+mobileExists = true;
+}
+
+if(data.aadhaar === aadhaar){
+aadhaarExists = true;
+}
+
+});
+
+if(mobileExists){
+alert("❌ Mobile Number Already Registered");
+return;
+}
+
+if(aadhaarExists){
+alert("❌ Aadhaar Number Already Registered");
+return;
+}
 
 try{
 
