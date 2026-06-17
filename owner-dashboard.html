@@ -112,15 +112,12 @@ background:#b91c1c;
 
 <p id="businessCode"></p>
 
-<button class="logout" onclick="logoutOwner()">
-Logout
-</button>
 
 </div>
 
 <div class="card">
 
-<h2>Total Tenants</h2>
+<h2>Total Participants</h2>
 
 <div class="total" id="tenantCount">
 0
@@ -152,6 +149,10 @@ Logout
 
 <button onclick="window.location.href='view-winners.html'">
 📋 View Winners
+</button>
+
+<button class="logout" onclick="logoutOwner()">
+🚪 Logout
 </button>
 
 </div>
@@ -229,16 +230,15 @@ if(doc.id === ownerDocId){
 const data = doc.data();
 
 document.getElementById("ownerName").innerText =
-data.fullName || "Owner";
-
-document.getElementById("businessName").innerText =
-"Business : " + (data.businessName || "-");
-
-document.getElementById("ownerId").innerText =
-"Owner ID : " + (data.ownerId || "-");
+"👤 Owner Name : " + (data.fullName || "-");
 
 document.getElementById("businessCode").innerText =
-"Business Code : " + (data.businessCode || "-");
+"🏢 Business Code : " + (data.businessCode || "-");
+
+document.getElementById("ownerId").innerText =
+"🆔 Owner ID : " + (data.ownerId || "-");
+
+document.getElementById("businessName").style.display = "none";
 
 }
 
