@@ -153,8 +153,8 @@ const db = getFirestore(app);
 
 const params = new URLSearchParams(window.location.search);
 
-const ownerId = params.get("owner") || "";
-const businessCode = params.get("business") || "";
+const ownerId = params.get("ownerId") || "";
+const businessCode = params.get("businessCode") || "";
 const tenantName = params.get("name") || "";
 const fatherName = params.get("father") || "";
 const mobile = params.get("mobile") || "";
@@ -233,7 +233,7 @@ document.getElementById("status").innerHTML =
 setTimeout(()=>{
 
 window.location.href =
-`tenant-success.html?unicode=${unicode}&owner=${ownerId}&business=${businessCode}`;
+`tenant-success.html?unicode=${unicode}&ownerId=${ownerId}&businessCode=${businessCode}`;
 
 },1500);
 
